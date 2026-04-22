@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRD - 铺设目标柜机清单</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f6fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 头部 */
+        .header {
+            background: linear-gradient(135deg, #1677ff 0%, #0958d9 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 24px rgba(22, 119, 255, 0.3);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .header-meta {
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .header-tag {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 4px;
+        }
+
+        /* 导航 */
+        .nav {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            z-index: 100;
+        }
+
+        .nav a {
+            color: #666;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .nav a:hover, .nav a.active {
+            background: #1677ff;
+            color: white;
+        }
+
+        /* 卡片 */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title::before {
+            content: "";
+            width: 4px;
+            height: 24px;
+            background: #1677ff;
+            border-radius: 2px;
+        }
+
+        /* 标签 */
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .tag-p0 { background: #fff2e8; color: #d4380d; }
+        .tag-p1 { background: #e6f4ff; color: #1677ff; }
+        .tag-p2 { background: #f6ffed; color: #52c41a; }
+
+        /* 问题卡片 */
+        .problem-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .problem-item {
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .problem-item .icon {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .problem-item h4 {
+            color: #d48806;
+            margin-bottom: 8px;
+        }
+
+        .problem-item p {
+            color: #8c8c8c;
+            font-size: 14px;
+        }
+
+        /* 功能卡片 */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            border: 1px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: #1677ff;
+            box-shadow: 0 4px 16px rgba(22, 119, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .feature-card .icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #1677ff 0%, #0958d9 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .feature-card .tags {
+            margin-top: 16px;
+            display: flex;
+            gap: 8px;
+        }
+
+        /* 页面预览 */
+        .page-preview {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .page-header {
+            background: #16213e;
+            padding: 16px 24px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 0;
+        }
+
+        .page-header h4 {
+            color: #eee;
+            font-size: 14px;
+        }
+
+        .window-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27ca40; }
+
+        .page-content {
+            background: white;
+            border-radius: 0 0 12px 12px;
+            padding: 24px;
+            min-height: 400px;
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* 操作栏 */
+        .action-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #1677ff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0958d9;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #d9d9d9;
+            color: #333;
+        }
+
+        .btn-outline:hover {
+            border-color: #1677ff;
+            color: #1677ff;
+        }
+
+        .btn-danger {
+            background: #fff2f0;
+            color: #ff4d4f;
+            border: 1px solid #ffccc7;
+        }
+
+        .btn-danger:hover {
+            background: #ff4d4f;
+            color: white;
+        }
+
+        /* 搜索区 */
+        .search-bar {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .search-bar input {
+            flex: 1;
+            max-width: 300px;
+            padding: 10px 16px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #1677ff;
+        }
+
+        /* 表格 */
+        .table-wrapper {
+            border: 1px solid #f0f0f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        th {
+            background: #fafafa;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+
+        td {
+            font-size: 14px;
+            color: #666;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #fafafa;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .code-badge {
+            background: #f0f5ff;
+            color: #1677ff;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-family: "Monaco", "Menlo", monospace;
+            font-size: 13px;
+        }
+
+        /* 分页 */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .pagination-info {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .pagination-controls button {
+            padding: 6px 12px;
+            border: 1px solid #d9d9d9;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .pagination-controls button:hover {
+            border-color: #1677ff;
+            color: #1677ff;
+        }
+
+        .pagination-controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 弹窗 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            background: #fafafa;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 8px;
+            font-family: "Monaco", "Menlo", monospace;
+            font-size: 13px;
+            resize: vertical;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #1677ff;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        /* 流程 */
+        .flow {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .flow-step {
+            background: #e6f4ff;
+            border: 1px solid #91caff;
+            color: #1677ff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .flow-arrow {
+            color: #999;
+            font-size: 20px;
+        }
+
+        /* 异常处理 */
+        .exception-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .exception-item {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: #fff;
+            border: 1px solid #f0f0f0;
+            border-radius: 8px;
+        }
+
+        .exception-item .status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .status-error { background: #ff4d4f; }
+        .status-warning { background: #faad14; }
+        .status-info { background: #1677ff; }
+
+        .exception-item h5 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .exception-item p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* 目标指标 */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 24px;
+            background: linear-gradient(135deg, #f0f5ff 0%, #e6f4ff 100%);
+            border-radius: 12px;
+        }
+
+        .metric-card .value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1677ff;
+        }
+
+        .metric-card .label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e8e8e8;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 24px;
+        }
+
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -20px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #1677ff;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #1677ff;
+        }
+
+        .timeline-item h4 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .timeline-item p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .timeline-item .duration {
+            color: #999;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        /* 接口表格 */
+        .api-table th:first-child,
+        .api-table td:first-child {
+            font-family: "Monaco", "Menlo", monospace;
+            font-size: 13px;
+            color: #d4380d;
+        }
+
+        .method-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .method-get { background: #e6f4ff; color: #1677ff; }
+        .method-post { background: #f6ffed; color: #52c41a; }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container { padding: 20px 16px; }
+            .header { padding: 24px; }
+            .header h1 { font-size: 24px; }
+            .card { padding: 20px; }
+            .nav { overflow-x: auto; }
+            .action-bar { flex-direction: column; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>支付宝碰一下对接 2 期_N6D_优化需求</h1>
+            <p style="opacity: 0.9; font-size: 16px; margin-bottom: 20px;">铺设目标柜机清单 · 子菜单功能</p>
+            <div class="header-meta">
+                <span class="header-tag">V2.1</span>
+                <span>2026-04-21</span>
+                <span>产品经理：张常常</span>
+                <span class="header-tag">P0</span>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <nav class="nav">
+            <a href="#overview" class="active">需求概览</a>
+            <a href="#background">背景与目标</a>
+            <a href="#functions">功能详情</a>
+            <a href="#page">页面原型</a>
+            <a href="#data">数据设计</a>
+            <a href="#plan">风险与依赖</a>
+        </nav>
+
+        <!-- 需求概览 -->
+        <div class="card" id="overview">
+            <h2 class="card-title">需求概览</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="value">4</div>
+                    <div class="label">核心功能点</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">P0</div>
+                    <div class="label">优先级</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">1</div>
+                    <div class="label">新增页面</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 背景与目标 -->
+        <div class="card" id="background">
+            <h2 class="card-title">背景与目标</h2>
+            
+            <h3 style="font-size: 16px; margin-bottom: 16px; color: #333;">🔍 现存问题</h3>
+            <div class="problem-list">
+                <div class="problem-item">
+                    <div class="icon">⚙️</div>
+                    <h4>技术实现依赖手工操作</h4>
+                    <p>白名单数据存储在 Redis 缓存中，目前增删改查都需要研发手工处理</p>
+                </div>
+                <div class="problem-item">
+                    <div class="icon">📈</div>
+                    <h4>高频修改需求</h4>
+                    <p>实际业务中对白名单有频繁的修改需求，研发手工处理效率低、响应慢</p>
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; margin: 32px 0 16px; color: #333;">🎯 核心目标</h3>
+            <div style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 12px; padding: 24px;">
+                <p style="font-size: 15px; color: #52c41a; font-weight: 500;">
+                    实现用户自主修改、导出白名单，减少对研发的依赖，提升运营效率。
+                </p>
+            </div>
+        </div>
+
+        <!-- 功能详情 -->
+        <div class="card" id="functions">
+            <h2 class="card-title">功能详情</h2>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">➕</div>
+                    <h3>新增柜机编码</h3>
+                    <p>支持单个或批量新增柜机编码至白名单，支持粘贴导入</p>
+                    <div class="tags">
+                        <span class="tag tag-p0">P0</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🗑️</div>
+                    <h3>删除柜机编码</h3>
+                    <p>支持单个删除或批量勾选删除，删除前二次确认</p>
+                    <div class="tags">
+                        <span class="tag tag-p0">P0</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔍</div>
+                    <h3>查询柜机编码</h3>
+                    <p>输入单个编码，快速查询是否在白名单中</p>
+                    <div class="tags">
+                        <span class="tag tag-p0">P0</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📥</div>
+                    <h3>导出柜机清单</h3>
+                    <p>一键导出所有柜机编码至 CSV 文件</p>
+                    <div class="tags">
+                        <span class="tag tag-p1">P1</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; margin: 32px 0 16px; color: #333;">菜单位置</h3>
+            <div style="background: #fafafa; padding: 20px; border-radius: 8px; font-family: monospace;">
+                <div style="margin-left: 20px;">
+                    <div style="color: #666;">📁 支付宝碰一下</div>
+                    <div style="margin-left: 20px; color: #999;">├── 用户碰一下访问日志</div>
+                    <div style="margin-left: 20px; color: #999;">├── 碰一下设备绑定管理</div>
+                    <div style="margin-left: 20px; color: #999;">├── 业务控制开关</div>
+                    <div style="margin-left: 20px; color: #1677ff; font-weight: 600;">└── <span style="background: #e6f4ff; padding: 2px 8px; border-radius: 4px;">铺设目标柜机清单</span> ← 新增</div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; margin: 32px 0 16px; color: #333;">异常处理</h3>
+            <div class="exception-grid">
+                <div class="exception-item">
+                    <div class="status status-error"></div>
+                    <div>
+                        <h5>编码已存在</h5>
+                        <p>提示"XX已存在，无需重复添加"，跳过该编码</p>
+                    </div>
+                </div>
+                <div class="exception-item">
+                    <div class="status status-error"></div>
+                    <div>
+                        <h5>格式错误</h5>
+                        <p>提示"编码格式错误"，标红错误行</p>
+                    </div>
+                </div>
+                <div class="exception-item">
+                    <div class="status status-warning"></div>
+                    <div>
+                        <h5>本次录入重复</h5>
+                        <p>标红重复行，提示用户修正</p>
+                    </div>
+                </div>
+                <div class="exception-item">
+                    <div class="status status-info"></div>
+                    <div>
+                        <h5>空输入</h5>
+                        <p>禁止提交，提示"请输入柜机编码"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页面原型 -->
+        <div class="card" id="page">
+            <h2 class="card-title">页面原型</h2>
+            
+            <div class="page-preview">
+                <div class="page-header">
+                    <div class="window-dot dot-red"></div>
+                    <div class="window-dot dot-yellow"></div>
+                    <div class="window-dot dot-green"></div>
+                    <h4>铺设目标柜机清单</h4>
+                </div>
+                <div class="page-content">
+                    <div class="page-title">铺设目标柜机清单</div>
+                    
+                    <!-- 操作栏 -->
+                    <div class="action-bar">
+                        <button class="btn btn-primary" onclick="showModal('addModal')">➕ 新增柜机</button>
+                        <button class="btn btn-danger" id="deleteBtn" disabled>🗑️ 删除选中</button>
+                        <button class="btn btn-outline">📥 导出全部</button>
+                    </div>
+                    
+                    <!-- 搜索区 -->
+                    <div class="search-bar">
+                        <input type="text" id="searchInput" placeholder="输入柜机编码查询，如：FC7550001">
+                        <button class="btn btn-primary" onclick="doSearch()">🔍 查询</button>
+                    </div>
+                    
+                    <!-- 表格 -->
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;"><input type="checkbox" class="checkbox" id="selectAll"></th>
+                                    <th>柜机编码</th>
+                                    <th>录入时间</th>
+                                    <th style="width: 100px;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="checkbox" class="checkbox row-check"></td>
+                                    <td><span class="code-badge">FC7550001</span></td>
+                                    <td>2026-04-20 14:30:22</td>
+                                    <td><button class="btn btn-danger" style="padding: 4px 12px; font-size: 12px;">删除</button></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="checkbox row-check"></td>
+                                    <td><span class="code-badge">FC7550002</span></td>
+                                    <td>2026-04-20 13:15:08</td>
+                                    <td><button class="btn btn-danger" style="padding: 4px 12px; font-size: 12px;">删除</button></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="checkbox row-check"></td>
+                                    <td><span class="code-badge">FC7550003</span></td>
+                                    <td>2026-04-19 16:45:33</td>
+                                    <td><button class="btn btn-danger" style="padding: 4px 12px; font-size: 12px;">删除</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 分页 -->
+                    <div class="pagination">
+                        <div class="pagination-info">共 3 条</div>
+                        <div class="pagination-controls">
+                            <button disabled>◀</button>
+                            <button style="background: #1677ff; color: white; border-color: #1677ff;">1</button>
+                            <button disabled>▶</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; margin: 32px 0 16px; color: #333;">交互流程</h3>
+            
+            <h4 style="font-size: 14px; color: #666; margin-bottom: 12px;">新增柜机编码</h4>
+            <div class="flow">
+                <div class="flow-step">点击「新增柜机」</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">选择录入模式</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">输入编码</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">系统校验</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">保存成功</div>
+            </div>
+
+            <h4 style="font-size: 14px; color: #666; margin: 20px 0 12px;">删除柜机编码</h4>
+            <div class="flow">
+                <div class="flow-step">勾选条目</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">点击「删除选中」</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">二次确认</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">执行删除</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">刷新列表</div>
+            </div>
+        </div>
+
+        <!-- 数据设计 -->
+        <div class="card" id="data">
+            <h2 class="card-title">数据设计</h2>
+            
+            <h3 style="font-size: 16px; margin-bottom: 16px; color: #333;">📊 数据表设计</h3>
+            <div style="background: #fafafa; padding: 20px; border-radius: 8px; overflow-x: auto;">
+                <table style="background: white;">
+                    <thead>
+                        <tr>
+                            <th>字段名</th>
+                            <th>类型</th>
+                            <th>描述</th>
+                            <th>约束</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>id</td>
+                            <td>bigint</td>
+                            <td>主键</td>
+                            <td>自增</td>
+                        </tr>
+                        <tr>
+                            <td>cabinet_code</td>
+                            <td>varchar(32)</td>
+                            <td>柜机编码</td>
+                            <td>唯一索引，非空</td>
+                        </tr>
+                        <tr>
+                            <td>created_at</td>
+                            <td>datetime</td>
+                            <td>录入时间</td>
+                            <td>非空，默认当前时间</td>
+                        </tr>
+                        <tr>
+                            <td>created_by</td>
+                            <td>varchar(64)</td>
+                            <td>录入人</td>
+                            <td>非空</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 style="font-size: 16px; margin: 32px 0 16px; color: #333;">🔌 接口设计</h3>
+            <table class="api-table">
+                <thead>
+                    <tr>
+                        <th>接口</th>
+                        <th>方法</th>
+                        <th>描述</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>/api/cabinet-whitelist/list</td>
+                        <td><span class="method-badge method-get">GET</span></td>
+                        <td>分页查询白名单</td>
+                    </tr>
+                    <tr>
+                        <td>/api/cabinet-whitelist/add</td>
+                        <td><span class="method-badge method-post">POST</span></td>
+                        <td>新增柜机编码</td>
+                    </tr>
+                    <tr>
+                        <td>/api/cabinet-whitelist/delete</td>
+                        <td><span class="method-badge method-post">POST</span></td>
+                        <td>删除柜机编码</td>
+                    </tr>
+                    <tr>
+                        <td>/api/cabinet-whitelist/check</td>
+                        <td><span class="method-badge method-get">GET</span></td>
+                        <td>查询单个编码状态</td>
+                    </tr>
+                    <tr>
+                        <td>/api/cabinet-whitelist/export</td>
+                        <td><span class="method-badge method-get">GET</span></td>
+                        <td>导出白名单</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="font-size: 16px; margin: 32px 0 16px; color: #333;">📋 编码格式规范</h3>
+            <div style="background: #f0f5ff; padding: 20px; border-radius: 8px;">
+                <div style="font-family: monospace; font-size: 14px;">
+                    <div><strong>格式：</strong>英文字母 + 数字组合</div>
+                    <div><strong>长度：</strong>8-16 位</div>
+                    <div><strong>示例：</strong><span class="code-badge" style="margin-left: 8px;">FC7550001</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 风险与依赖 -->
+        <div class="card" id="plan">
+            <h2 class="card-title">风险与依赖</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+                <div>
+                    <h3 style="font-size: 16px; margin-bottom: 16px; color: #333;">⚠️ 风险评估</h3>
+                    <div class="exception-grid" style="grid-template-columns: 1fr;">
+                        <div class="exception-item">
+                            <div class="status status-error"></div>
+                            <div>
+                                <h5>数据误删风险</h5>
+                                <p>影响程度：高 | 措施：二次确认 + 操作日志追溯</p>
+                            </div>
+                        </div>
+                        <div class="exception-item">
+                            <div class="status status-warning"></div>
+                            <div>
+                                <h5>批量导入性能</h5>
+                                <p>影响程度：中 | 措施：分批处理，异步执行</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="font-size: 16px; margin-bottom: 16px; color: #333;">🔗 依赖项</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📦 依赖现有「支付宝碰一下」菜单结构</li>
+                        <li style="padding: 8px 0;">📦 依赖通用组件（弹窗、分页、表格）</li>
+                        <li style="padding: 8px 0;">📦 白名单采用数据表存储</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div style="text-align: center; padding: 40px 0; color: #999; font-size: 14px;">
+            <p>📄 PRD V2.1 | 支付宝碰一下对接 2 期_N6D_优化需求 | 2026-04-21</p>
+        </div>
+    </div>
+
+    <!-- 新增弹窗 -->
+    <div class="modal-overlay" id="addModal" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                新增柜机编码
+                <span style="float: right; cursor: pointer; font-size: 20px;" onclick="hideModal('addModal')">×</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>录入方式</label>
+                    <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <input type="radio" name="mode" value="single" checked> 单个录入
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <input type="radio" name="mode" value="batch"> 批量录入
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>柜机编码</label>
+                    <textarea id="codesInput" placeholder="请输入柜机编码，如：FC7550001"></textarea>
+                    <div class="form-hint">批量录入时，每行一个编码</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="hideModal('addModal')">取消</button>
+                <button class="btn btn-primary" onclick="submitAdd()">确认添加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除确认弹窗 -->
+    <div class="modal-overlay" id="deleteModal" style="display: none;">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                确认删除
+                <span style="float: right; cursor: pointer; font-size: 20px;" onclick="hideModal('deleteModal')">×</span>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 32px;">
+                <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+                <p id="deleteTip">确定删除选中的 2 条柜机编码吗？</p>
+                <p style="color: #ff4d4f; font-size: 13px; margin-top: 8px;">此操作不可逆</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="hideModal('deleteModal')">取消</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 查询结果提示 -->
+    <div class="modal-overlay" id="searchModal" style="display: none;">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                查询结果
+                <span style="float: right; cursor: pointer; font-size: 20px;" onclick="hideModal('searchModal')">×</span>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 32px;">
+                <div id="searchResultIcon" style="font-size: 48px; margin-bottom: 16px;">✅</div>
+                <p id="searchResultText" style="font-size: 16px;">编码 FC7550001 已在白名单中</p>
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button class="btn btn-primary" onclick="hideModal('searchModal')">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全选功能
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checked = this.checked;
+            document.querySelectorAll('.row-check').forEach(cb => cb.checked = checked);
+            updateDeleteBtn();
+        });
+
+        // 行选择
+        document.querySelectorAll('.row-check').forEach(cb => {
+            cb.addEventListener('change', updateDeleteBtn);
+        });
+
+        function updateDeleteBtn() {
+            const checkedCount = document.querySelectorAll('.row-check:checked').length;
+            const btn = document.getElementById('deleteBtn');
+            btn.disabled = checkedCount === 0;
+            btn.textContent = checkedCount > 0 ? `🗑️ 删除选中 (${checkedCount})` : '🗑️ 删除选中';
+        }
+
+        // 弹窗控制
+        function showModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+
+        function hideModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function submitAdd() {
+            const codes = document.getElementById('codesInput').value.trim();
+            if (!codes) {
+                alert('请输入柜机编码');
+                return;
+            }
+            alert('添加成功！');
+            hideModal('addModal');
+        }
+
+        function confirmDelete() {
+            alert('删除成功！');
+            hideModal('deleteModal');
+        }
+
+        function doSearch() {
+            const code = document.getElementById('searchInput').value.trim();
+            if (!code) {
+                alert('请输入柜机编码');
+                return;
+            }
+            const inList = ['FC7550001', 'FC7550002', 'FC7550003'].includes(code);
+            document.getElementById('searchResultIcon').textContent = inList ? '✅' : '❌';
+            document.getElementById('searchResultText').textContent = inList 
+                ? `编码 ${code} 已在白名单中`
+                : `编码 ${code} 不在白名单中`;
+            showModal('searchModal');
+        }
+
+        // 导航高亮
+        document.querySelectorAll('.nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav a').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+</body>
+</html>
