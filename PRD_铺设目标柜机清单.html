@@ -831,7 +831,7 @@
                         <button class="btn btn-primary" onclick="showModal('addModal')">➕ 新增柜机</button>
                         <button class="btn btn-danger" id="deleteBtn" disabled>🗑️ 删除选中</button>
                         <button class="btn btn-outline">📥 导出全部</button>
-                        <button class="btn btn-outline" style="border-color: #722ed1; color: #722ed1;">📋 查看日志</button>
+                        <button class="btn btn-outline" style="border-color: #722ed1; color: #722ed1;" onclick="showModal('logModal')">📋 查看日志</button>
                     </div>
                     
                     <!-- 搜索区 -->
@@ -912,6 +912,32 @@
                 <div class="flow-step">执行删除</div>
                 <span class="flow-arrow">→</span>
                 <div class="flow-step">刷新列表</div>
+            </div>
+
+            <h4 style="font-size: 14px; color: #666; margin: 20px 0 12px;">查看操作日志</h4>
+            <div class="flow">
+                <div class="flow-step">点击「查看日志」</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">弹出日志弹窗</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">查看/筛选日志</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">点击「关闭」</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">返回列表页</div>
+            </div>
+
+            <h4 style="font-size: 14px; color: #666; margin: 20px 0 12px;">查看大批量日志详情（>20条）</h4>
+            <div class="flow">
+                <div class="flow-step">点击「查看详情」</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">弹出详情弹窗</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">展示成功/失败编码</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">点击「确定」</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">返回日志列表</div>
             </div>
 
             <!-- 操作日志原型 -->
@@ -1356,6 +1382,167 @@
         </div>
     </div>
 
+    <!-- 操作日志弹窗 -->
+    <div class="modal-overlay" id="logModal" style="display: none;">
+        <div class="modal" style="max-width: 900px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                铺设目标柜机清单 - 操作日志
+                <span style="float: right; cursor: pointer; font-size: 20px;" onclick="hideModal('logModal')">×</span>
+            </div>
+            <div class="modal-body" style="overflow-y: auto; flex: 1;">
+                <!-- 筛选栏 -->
+                <div class="search-bar" style="flex-wrap: wrap;">
+                    <select style="padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px; min-width: 100px;">
+                        <option>全部操作</option>
+                        <option>新增</option>
+                        <option>删除</option>
+                    </select>
+                    <input type="text" placeholder="操作人" style="max-width: 120px; padding: 8px 12px;">
+                    <input type="date" style="padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px;">
+                    <span style="color: #999; font-size: 13px;">至</span>
+                    <input type="date" style="padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px;">
+                    <button class="btn btn-primary" style="padding: 8px 16px;">🔍 筛选</button>
+                    <button class="btn btn-outline" style="padding: 8px 16px;">重置</button>
+                </div>
+
+                <!-- 日志表格 -->
+                <div class="table-wrapper" style="margin-top: 16px;">
+                    <table style="font-size: 13px;">
+                        <thead>
+                            <tr>
+                                <th style="width: 140px;">操作时间</th>
+                                <th style="width: 70px;">操作类型</th>
+                                <th>柜机编码</th>
+                                <th style="width: 60px;">数量</th>
+                                <th style="width: 80px;">操作人</th>
+                                <th style="width: 70px;">结果</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2026-04-21 14:30:22</td>
+                                <td><span class="tag" style="background: #f6ffed; color: #52c41a; font-size: 11px; padding: 2px 6px;">新增</span></td>
+                                <td><span class="code-badge">FC7550004</span></td>
+                                <td>1</td>
+                                <td>张常常</td>
+                                <td><span class="tag" style="background: #e6f4ff; color: #1677ff; font-size: 11px; padding: 2px 6px;">成功</span></td>
+                            </tr>
+                            <tr>
+                                <td>2026-04-21 11:15:08</td>
+                                <td><span class="tag" style="background: #fff2e8; color: #ff4d4f; font-size: 11px; padding: 2px 6px;">删除</span></td>
+                                <td><span class="code-badge">FC7550002</span></td>
+                                <td>1</td>
+                                <td>李运营</td>
+                                <td><span class="tag" style="background: #e6f4ff; color: #1677ff; font-size: 11px; padding: 2px 6px;">成功</span></td>
+                            </tr>
+                            <tr>
+                                <td>2026-04-20 10:20:15</td>
+                                <td><span class="tag" style="background: #f6ffed; color: #52c41a; font-size: 11px; padding: 2px 6px;">新增</span></td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                                        <span class="code-badge">FC7550001</span>
+                                        <span class="code-badge">FC7550002</span>
+                                        <span class="code-badge">FC7550003</span>
+                                        <span class="code-badge">FC7550004</span>
+                                        <span style="color: #1677ff; cursor: pointer; font-size: 11px;" onclick="this.style.display='none'; document.getElementById('moreCodes2').style.display='inline';">+10 更多</span>
+                                        <span id="moreCodes2" style="display: none;">
+                                            <span class="code-badge">FC7550005</span>
+                                            <span class="code-badge">FC7550006</span>
+                                            <span class="code-badge">FC7550007</span>
+                                            <span class="code-badge">FC7550008</span>
+                                            <span class="code-badge">FC7550009</span>
+                                            <span class="code-badge">FC7550010</span>
+                                            <span class="code-badge">FC7550011</span>
+                                            <span class="code-badge">FC7550012</span>
+                                            <span class="code-badge">FC7550013</span>
+                                            <span class="code-badge">FC7550014</span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>14</td>
+                                <td>王经理</td>
+                                <td><span class="tag" style="background: #e6f4ff; color: #1677ff; font-size: 11px; padding: 2px 6px;">成功</span></td>
+                            </tr>
+                            <tr>
+                                <td>2026-04-20 10:20:10</td>
+                                <td><span class="tag" style="background: #f6ffed; color: #52c41a; font-size: 11px; padding: 2px 6px;">新增</span></td>
+                                <td>
+                                    <span style="color: #666; font-size: 12px;">共 58 条编码</span>
+                                    <button class="btn btn-outline" style="padding: 2px 8px; font-size: 11px; margin-left: 8px;" onclick="showLogDetail()">查看详情</button>
+                                </td>
+                                <td>58</td>
+                                <td>王经理</td>
+                                <td><span class="tag" style="background: #fff2e8; color: #faad14; font-size: 11px; padding: 2px 6px;">部分成功</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 分页 -->
+                <div class="pagination">
+                    <div class="pagination-info">共 4 条</div>
+                    <div class="pagination-controls">
+                        <button disabled style="padding: 4px 10px;">◀</button>
+                        <button style="background: #1677ff; color: white; border-color: #1677ff; padding: 4px 10px;">1</button>
+                        <button disabled style="padding: 4px 10px;">▶</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="hideModal('logModal')">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 日志详情弹窗（大批量编码详情） -->
+    <div class="modal-overlay" id="logDetailModal" style="display: none;">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                操作详情 - 批量新增
+                <span style="float: right; cursor: pointer; font-size: 20px;" onclick="hideModal('logDetailModal')">×</span>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <div style="margin-bottom: 16px;">
+                    <strong>操作信息：</strong>
+                    <div style="margin-top: 8px; color: #666; font-size: 14px;">
+                        <p>操作时间：2026-04-20 10:20:10</p>
+                        <p>操作人：王经理</p>
+                        <p>操作类型：<span style="color: #52c41a;">新增</span></p>
+                    </div>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <strong>操作结果：</strong>
+                    <div style="margin-top: 8px; display: flex; gap: 16px;">
+                        <span style="color: #52c41a;">✅ 成功 55 条</span>
+                        <span style="color: #faad14;">⚠️ 跳过 3 条（已存在）</span>
+                    </div>
+                </div>
+                <div>
+                    <strong>成功编码（55条）：</strong>
+                    <div style="margin-top: 8px; max-height: 200px; overflow-y: auto; background: #fafafa; padding: 12px; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 6px;">
+                        <span class="code-badge" style="font-size: 11px;">FC7550001</span>
+                        <span class="code-badge" style="font-size: 11px;">FC7550002</span>
+                        <span class="code-badge" style="font-size: 11px;">FC7550003</span>
+                        <span class="code-badge" style="font-size: 11px;">FC7550004</span>
+                        <span class="code-badge" style="font-size: 11px;">FC7550005</span>
+                        <span class="code-badge" style="font-size: 11px;">...</span>
+                    </div>
+                </div>
+                <div style="margin-top: 16px;">
+                    <strong>跳过编码（3条）：</strong>
+                    <div style="margin-top: 8px; background: #fffbe6; padding: 12px; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 6px;">
+                        <span class="code-badge" style="font-size: 11px; background: #fff2e8; color: #ff4d4f;">FC7550099</span>
+                        <span class="code-badge" style="font-size: 11px; background: #fff2e8; color: #ff4d4f;">FC7550100</span>
+                        <span class="code-badge" style="font-size: 11px; background: #fff2e8; color: #ff4d4f;">FC7550101</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="hideModal('logDetailModal')">确定</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // 全选功能
         document.getElementById('selectAll').addEventListener('change', function() {
@@ -1383,6 +1570,11 @@
 
         function hideModal(id) {
             document.getElementById(id).style.display = 'none';
+        }
+
+        function showLogDetail() {
+            hideModal('logModal');
+            showModal('logDetailModal');
         }
 
         function submitAdd() {
