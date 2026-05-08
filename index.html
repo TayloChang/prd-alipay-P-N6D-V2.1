@@ -729,7 +729,7 @@
                 <div class="feature-card">
                     <div class="icon">➕</div>
                     <h3>新增柜机编码</h3>
-                    <p>支持单个或批量新增柜机编码至白名单，支持粘贴导入</p>
+                    <p>支持单个或批量新增柜机编码至白名单，批量通过CSV文件上传</p>
                     <div class="tags">
                         <span class="tag tag-p0">P0</span>
                     </div>
@@ -784,15 +784,8 @@
                 <div class="exception-item">
                     <div class="status status-error"></div>
                     <div>
-                        <h5>编码已存在</h5>
+                        <h5>单个导入时编码已存在</h5>
                         <p>提示"XX已存在，无需重复添加"，跳过该编码</p>
-                    </div>
-                </div>
-                <div class="exception-item">
-                    <div class="status status-error"></div>
-                    <div>
-                        <h5>格式错误</h5>
-                        <p>提示"编码格式错误"，标红错误行</p>
                     </div>
                 </div>
                 <div class="exception-item">
@@ -803,10 +796,17 @@
                     </div>
                 </div>
                 <div class="exception-item">
+                    <div class="status status-error"></div>
+                    <div>
+                        <h5>单个导入时格式错误</h5>
+                        <p>后端校验格式，前端弹窗展示格式错误的柜机编码</p>
+                    </div>
+                </div>
+                <div class="exception-item">
                     <div class="status status-warning"></div>
                     <div>
-                        <h5>批量导入-部分柜机已存在</h5>
-                        <p>能新增的先新增，重复的跳过。提示"新增成功 X 条，跳过 Y 条已存在的柜机编码"</p>
+                        <h5>批量导入-部分柜机已存在/格式错误</h5>
+                        <p>能新增的先新增，重复/格式错误的跳过。提示"新增成功 X 条，跳过 Y 条已存在的柜机编码，跳过 Z 条格式错误的柜机编码"</p>
                     </div>
                 </div>
             </div>
@@ -888,17 +888,30 @@
 
             <h3 style="font-size: 16px; margin: 32px 0 16px; color: #333;">交互流程</h3>
 
-            <h4 style="font-size: 14px; color: #666; margin-bottom: 12px;">新增柜机编码</h4>
+            <h4 style="font-size: 14px; color: #666; margin-bottom: 12px;">新增柜机编码（单个）</h4>
             <div class="flow">
                 <div class="flow-step">点击「新增柜机」</div>
                 <span class="flow-arrow">→</span>
-                <div class="flow-step">选择录入模式</div>
+                <div class="flow-step">选择单个录入</div>
                 <span class="flow-arrow">→</span>
-                <div class="flow-step">输入编码</div>
+                <div class="flow-step">输入柜机编码</div>
                 <span class="flow-arrow">→</span>
                 <div class="flow-step">系统校验</div>
                 <span class="flow-arrow">→</span>
                 <div class="flow-step">保存成功</div>
+            </div>
+
+            <h4 style="font-size: 14px; color: #666; margin: 20px 0 12px;">新增柜机编码（批量CSV）</h4>
+            <div class="flow">
+                <div class="flow-step">点击「新增柜机」</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">选择批量录入</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">上传CSV文件</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">后端处理</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">返回结果</div>
             </div>
 
             <h4 style="font-size: 14px; color: #666; margin: 20px 0 12px;">删除柜机编码</h4>
@@ -1326,17 +1339,35 @@
                     <label>录入方式</label>
                     <div style="display: flex; gap: 12px; margin-bottom: 16px;">
                         <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                            <input type="radio" name="mode" value="single" checked> 单个录入
+                            <input type="radio" name="mode" value="single" checked onclick="toggleUploadMode('single')"> 单个录入
                         </label>
                         <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                            <input type="radio" name="mode" value="batch"> 批量录入
+                            <input type="radio" name="mode" value="batch" onclick="toggleUploadMode('batch')"> 批量录入（CSV上传）
                         </label>
                     </div>
                 </div>
-                <div class="form-group">
+                <div id="singleMode" class="form-group">
                     <label>柜机编码</label>
                     <textarea id="codesInput" placeholder="请输入柜机编码，如：FC7550001"></textarea>
-                    <div class="form-hint">批量录入时，每行一个编码</div>
+                </div>
+                <div id="batchMode" class="form-group" style="display: none;">
+                    <label>上传CSV文件</label>
+                    <div style="border: 2px dashed #d9d9d9; border-radius: 8px; padding: 40px 20px; text-align: center; cursor: pointer;" onclick="document.getElementById('csvFile').click();">
+                        <div style="font-size: 32px; margin-bottom: 12px;">📁</div>
+                        <div style="color: #333; margin-bottom: 8px;">点击选择文件 或 拖拽文件到此处</div>
+                        <div style="color: #999; font-size: 12px;">支持 .csv 文件，单次最多上传 30 万条数据</div>
+                    </div>
+                    <input type="file" id="csvFile" accept=".csv" style="display: none;" onchange="handleFileSelect(this)">
+                    <div id="fileInfo" style="margin-top: 12px; display: none;">
+                        <div style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 6px; padding: 12px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="color: #52c41a;">✓</span>
+                                <span id="fileName" style="font-weight: 500;"></span>
+                            </div>
+                            <div id="fileStats" style="color: #666; font-size: 13px; margin-top: 4px;"></div>
+                        </div>
+                    </div>
+                    <div class="form-hint">CSV文件格式：第一列为柜机编码，无需表头</div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -1577,11 +1608,45 @@
             showModal('logDetailModal');
         }
 
+        // 切换录入模式
+        function toggleUploadMode(mode) {
+            document.getElementById('singleMode').style.display = mode === 'single' ? 'block' : 'none';
+            document.getElementById('batchMode').style.display = mode === 'batch' ? 'block' : 'none';
+        }
+
+        // 处理CSV文件选择
+        function handleFileSelect(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            document.getElementById('fileName').textContent = file.name;
+
+            // 读取文件统计行数
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                const lines = content.split('\n').filter(line => line.trim());
+                document.getElementById('fileStats').textContent = `共 ${lines.length} 条柜机编码`;
+                document.getElementById('fileInfo').style.display = 'block';
+            };
+            reader.readAsText(file);
+        }
+
         function submitAdd() {
-            const codes = document.getElementById('codesInput').value.trim();
-            if (!codes) {
-                alert('请输入柜机编码');
-                return;
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+
+            if (mode === 'single') {
+                const codes = document.getElementById('codesInput').value.trim();
+                if (!codes) {
+                    alert('请输入柜机编码');
+                    return;
+                }
+            } else {
+                const fileInput = document.getElementById('csvFile');
+                if (!fileInput.files[0]) {
+                    alert('请选择CSV文件');
+                    return;
+                }
             }
             alert('添加成功！');
             hideModal('addModal');
